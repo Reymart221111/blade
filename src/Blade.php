@@ -3,6 +3,7 @@
 namespace Jenssegers\Blade;
 
 use Illuminate\Config\Repository;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory as FactoryContract;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Factory;
 use Illuminate\View\ViewServiceProvider;
+use Jenssegers\Blade\Container as BladeContainer;
 
 class Blade implements FactoryContract
 {
@@ -31,9 +33,9 @@ class Blade implements FactoryContract
      */
     private $compiler;
 
-    public function __construct($viewPaths, string $cachePath, ContainerInterface $container = null)
+    public function __construct($viewPaths, string $cachePath, ?ContainerInterface $container = null)
     {
-        $this->container = $container ?: new Container;
+	    $this->container = $container ?: BladeContainer::getInstance();
 
         $this->setupContainer((array) $viewPaths, $cachePath);
         (new ViewServiceProvider($this->container))->register();
@@ -113,13 +115,18 @@ class Blade implements FactoryContract
 
     protected function setupContainer(array $viewPaths, string $cachePath)
     {
-        $this->container->bindIf('files', fn () => new Filesystem);
-        $this->container->bindIf('events', fn () => new Dispatcher);
-        $this->container->bindIf('config', fn () => new Repository([
-            'view.paths' => $viewPaths,
+        $this->container->bindIf('files', fn() => new Filesystem);
+        $this->container->bindIf('events', fn() => new Dispatcher);
+        $this->container->bindIf('config', fn() => new Repository([
+            'view.paths'    => $viewPaths,
             'view.compiled' => $cachePath,
         ]));
-
+        $this->container->bindIf('blade.compiler', function ($app) use ($cachePath) {
+            return new BladeCompiler($app['files'], $cachePath);
+        });
+    
+        Container::setInstance($this->container);
+    
         Facade::setFacadeApplication($this->container);
     }
 }
