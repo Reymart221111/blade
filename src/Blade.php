@@ -35,7 +35,7 @@ class Blade implements FactoryContract
 
     public function __construct($viewPaths, string $cachePath, ?ContainerInterface $container = null)
     {
-	    $this->container = $container ?: BladeContainer::getInstance();
+        $this->container = $container ?: BladeContainer::getInstance();
 
         $this->setupContainer((array) $viewPaths, $cachePath);
         (new ViewServiceProvider($this->container))->register();
@@ -115,18 +115,18 @@ class Blade implements FactoryContract
 
     protected function setupContainer(array $viewPaths, string $cachePath)
     {
-        $this->container->bindIf('files', fn() => new Filesystem);
-        $this->container->bindIf('events', fn() => new Dispatcher);
-        $this->container->bindIf('config', fn() => new Repository([
-            'view.paths'    => $viewPaths,
+        $this->container->bindIf('files', fn () => new Filesystem);
+        $this->container->bindIf('events', fn () => new Dispatcher);
+        $this->container->bindIf('config', fn () => new Repository([
+            'view.paths' => $viewPaths,
             'view.compiled' => $cachePath,
         ]));
         $this->container->bindIf('blade.compiler', function ($app) use ($cachePath) {
             return new BladeCompiler($app['files'], $cachePath);
         });
-    
+
         Container::setInstance($this->container);
-    
+
         Facade::setFacadeApplication($this->container);
     }
 }

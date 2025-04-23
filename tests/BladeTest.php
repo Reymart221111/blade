@@ -27,41 +27,41 @@ class BladeTest extends TestCase
         });
     }
 
-    public function testCompilerGetter()
+    public function test_compiler_getter()
     {
         $this->assertInstanceOf(BladeCompiler::class, $this->blade->compiler());
     }
 
-    public function testBasic()
+    public function test_basic()
     {
         $output = $this->blade->make('basic');
         $this->assertEquals('hello world', trim($output));
     }
 
-    public function testExists()
+    public function test_exists()
     {
         $this->assertFalse($this->blade->exists('nonexistentview'));
     }
 
-    public function testVariables()
+    public function test_variables()
     {
         $output = $this->blade->make('variables', ['name' => 'John Doe']);
         $this->assertEquals('hello John Doe', trim($output));
     }
 
-    public function testNonBlade()
+    public function test_non_blade()
     {
         $output = $this->blade->make('plain');
         $this->assertEquals('{{ this is plain php }}', trim($output));
     }
 
-    public function testFile()
+    public function test_file()
     {
         $output = $this->blade->file('tests/views/basic.blade.php');
         $this->assertEquals('hello world', trim($output));
     }
 
-    public function testShare()
+    public function test_share()
     {
         $this->blade->share('name', 'John Doe');
 
@@ -69,7 +69,7 @@ class BladeTest extends TestCase
         $this->assertEquals('hello John Doe', trim($output));
     }
 
-    public function testComposer()
+    public function test_composer()
     {
         $this->blade->composer('variables', function (View $view) {
             $view->with('name', 'John Doe and '.$view->offsetGet('name'));
@@ -79,7 +79,7 @@ class BladeTest extends TestCase
         $this->assertEquals('hello John Doe and Jane Doe', trim($output));
     }
 
-    public function testCreator()
+    public function test_creator()
     {
         $this->blade->creator('variables', function (View $view) {
             $view->with('name', 'John Doe');
@@ -92,25 +92,25 @@ class BladeTest extends TestCase
         $this->assertEquals('hello Jane Doe and John Doe', trim($output));
     }
 
-    public function testRenderAlias()
+    public function test_render_alias()
     {
         $output = $this->blade->render('basic');
         $this->assertEquals('hello world', trim($output));
     }
 
-    public function testDirective()
+    public function test_directive()
     {
         $output = $this->blade->make('directive', ['birthday' => new DateTime('1989/08/19')]);
         $this->assertEquals('Your birthday is August 19, 1989 12:00 am', trim($output));
     }
 
-    public function testIf()
+    public function test_if()
     {
         $output = $this->blade->make('if', ['birthday' => new DateTime('1989/08/19')]);
         $this->assertEquals('Birthday August 19, 1989 12:00 am detected', trim($output));
     }
 
-    public function testAddNamespace()
+    public function test_add_namespace()
     {
         $this->blade->addNamespace('other', 'tests/views/other');
 
@@ -118,7 +118,7 @@ class BladeTest extends TestCase
         $this->assertEquals('hello other world', trim($output));
     }
 
-    public function testReplaceNamespace()
+    public function test_replace_namespace()
     {
         $this->blade->addNamespace('other', 'tests/views/other');
         $this->blade->replaceNamespace('other', 'tests/views/another');
@@ -127,7 +127,7 @@ class BladeTest extends TestCase
         $this->assertEquals('hello another world', trim($output));
     }
 
-    public function testViewGetter()
+    public function test_view_getter()
     {
         /** @var Factory $view */
         $view = $this->blade;
@@ -135,7 +135,7 @@ class BladeTest extends TestCase
         $this->assertInstanceOf(ViewFinderInterface::class, $view->getFinder());
     }
 
-    public function testOther()
+    public function test_other()
     {
         $users = [
             [
@@ -171,7 +171,7 @@ class BladeTest extends TestCase
         return file_get_contents($file_path);
     }
 
-    public function testExtends()
+    public function test_extends()
     {
         $output = $this->blade->make('extends');
 
