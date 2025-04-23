@@ -22,8 +22,10 @@ Create a Blade instance by passing it the folder(s) where your view files are lo
 
 ```php
 use Jenssegers\Blade\Blade;
+use Jenssegers\Blade\Container as BladeContainer;
 
-$blade = new Blade('views', 'cache');
+$container = new BladeContainer();
+$blade = new Blade('views', 'cache', $container);
 
 echo $blade->make('homepage', ['name' => 'John Doe'])->render();
 ```
